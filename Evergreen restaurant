@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evergreen Veg | Smart Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --evergreen: #2e7d32;
+            --accent: #ff9800;
+            --light: #f4f7f4;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--light); overflow-x: hidden; }
+
+        /* Header Animation */
+        header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--evergreen);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .logo { color: var(--evergreen); font-weight: 700; font-size: 1.5rem; }
+
+        /* Menu Items Animation */
+        .menu-container { padding: 15px; display: grid; gap: 15px; padding-bottom: 100px; }
+
+        .item-card {
+            background: white;
+            border-radius: 15px;
+            display: flex;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .item-card:active { transform: scale(0.95); } /* Feel when clicked */
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Delay each item so they pop up one after another */
+        .item-card:nth-child(1) { animation-delay: 0.1s; }
+        .item-card:nth-child(2) { animation-delay: 0.2s; }
+        .item-card:nth-child(3) { animation-delay: 0.3s; }
+        .item-card:nth-child(4) { animation-delay: 0.4s; }
+        .item-card:nth-child(5) { animation-delay: 0.5s; }
+        .item-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .item-img { 
+            width: 70px; height: 70px; 
+            background: #e8f5e9; 
+            border-radius: 12px; 
+            margin-right: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .item-info { flex: 1; }
+        .item-name { font-weight: 600; color: #333; }
+        .item-price { color: var(--evergreen); font-weight: 700; margin-top: 4px; }
+
+        .add-btn {
+            background: var(--evergreen);
+            color: white; border: none;
+            padding: 8px 15px; border-radius: 20px;
+            font-weight: 600; align-self: center;
+            cursor: pointer;
+        }
+
+        /* Cart Button Animation */
+        #cartFab {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--evergreen);
+            color: white; padding: 15px 30px;
+            border-radius: 50px; font-weight: 700;
+            box-shadow: 0 5px 20px rgba(46, 125, 50, 0.4);
+            display: flex; gap: 10px; z-index: 100;
+        }
+
+        .bump { animation: bump 0.3s ease-out; }
+        @keyframes bump {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">EVERGREEN</div>
+    <p style="color: #666; font-size: 0.8rem;">Pure Vegetarian Restaurant</p>
+</header>
+
+<div class="menu-container" id="menu"></div>
+
+<div id="cartFab" onclick="alert('Order Feature Ready!')">
+    <span>🛒</span>
+    <span>View Order</span>
+    <span id="count">0</span>
+</div>
+
+<script>
+    const items = [
+        { id: 1, name: "Ghee Roast", price: 14.00, emoji: "🥞" },
+        { id: 2, name: "Masala Dosa", price: 13.00, emoji: "🌯" },
+        { id: 3, name: "Idly (2 Pcs)", price: 7.00, emoji: "⚪" },
+        { id: 4, name: "Vada (2 Pcs)", price: 8.00, emoji: "🍩" },
+        { id: 5, name: "Paper Roast", price: 15.00, emoji: "📏" },
+        { id: 6, name: "Poori Masala", price: 12.00, emoji: "🥘" }
+    ];
+
+    function render() {
+        const menu = document.getElementById('menu');
+        menu.innerHTML = items.map(item => `
+            <div class="item-card">
+                <div class="item-img">${item.emoji}</div>
+                <div class="item-info">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">AED ${item.price.toFixed(2)}</div>
+                </div>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+            </div>
+        `).join('');
+    }
+
+    let count = 0;
+    function addToCart(btn) {
+        count++;
+        document.getElementById('count').innerText = count;
+        
+        // Trigger the "Bump" animation on the cart
+        const fab = document.getElementById('cartFab');
+        fab.classList.remove('bump');
+        void fab.offsetWidth; // Reset animation
+        fab.classList.add('bump');
+        
+        // Visual feedback on button
+        btn.innerText = "Added!";
+        btn.style.background = "#ff9800";
+        setTimeout(() => {
+            btn.innerText = "Add";
+            btn.style.background = "#2e7d32";
+        }, 1000);
+    }
+
+    render();
+</script>
+</body>
+</html>
