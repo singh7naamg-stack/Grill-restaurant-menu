@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fat Free Chicken | Abu Dhabi</title>
+    <!-- Montserrat Font for Premium Feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --gold: #D4AF37;
+            --gold-light: #f1d279;
+            --text-main: #ffffff;
+            --text-dim: #b3b3b3;
+            --accent-red: #e63946;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- UI COMPONENTS --- */
+
+        header {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.7));
+            padding: 20px 15px 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .brand { text-align: center; margin-bottom: 15px; }
+        .brand h1 { color: var(--gold); font-weight: 800; font-size: 1.5rem; letter-spacing: 2px; }
+        .brand p { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        #searchInput {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid #333;
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #searchInput:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+
+        .category-bar {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            gap: 10px;
+            padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .category-bar::-webkit-scrollbar { display: none; }
+
+        .cat-btn {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid #333;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cat-btn.active {
+            background: var(--gold);
+            color: black;
+            border-color: var(--gold);
+        }
+
+        /* --- MENU GRID --- */
+
+        .menu-container { padding: 15px; display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 100px; }
+
+        .section-title {
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin: 20px 0 10px;
+            border-left: 4px solid var(--gold);
+            padding-left: 10px;
+        }
+
+        .item-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid #222;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .item-img {
+            width: 100px;
+            height: 100px;
+            background: #252525;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .item-info {
+            padding: 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .item-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+        .item-desc { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px; line-height: 1.2; }
+        
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-price { color: var(--gold-light); font-weight: 800; font-size: 1.1rem; }
+        
+        .add-btn {
+            background: var(--gold);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- FLOATING CART --- */
+
+        #cartFab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: var(--gold);
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #cartFab:active { transform: scale(0.9); }
+
+        .cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent-red);
+            color: white;
+            font-size: 0.7rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border: 2px solid var(--bg-dark);
+        }
+
+        /* --- MODAL --- */
+        #cartModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cart-items-list { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #333; }
+        
+        .checkout-btn {
+            background: #25D366; /* WhatsApp Green */
+            color: white;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 800;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .close-modal { font-size: 2rem; cursor: pointer; color: var(--gold); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>FAT FREE CHICKEN</h1>
+            <p>Hamdan Street, Abu Dhabi</p>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for Shawarma, Mandi, Grill..." onkeyup="filterMenu()">
+        </div>
+
+        <div class="category-bar" id="categoryBar">
+            <button class="cat-btn active" onclick="filterCategory('All')">All</button>
+            <button class="cat-btn" onclick="filterCategory('Combos')">Combos</button>
+            <button class="cat-btn" onclick="filterCategory('Grills')">Grills</button>
+            <button class="cat-btn" onclick="filterCategory('Rice')">Biriyani & Rice</button>
+            <button class="cat-btn" onclick="filterCategory('Indian')">Indian/Chinese</button>
+            <button class="cat-btn" onclick="filterCategory('Shawarma')">Shawarma</button>
+            <button class="cat-btn" onclick="filterCategory('Burgers')">Burgers</button>
+            <button class="cat-btn" onclick="filterCategory('Juices')">Juices</button>
+        </div>
+    </header>
+
+    <div class="menu-container" id="menuDisplay">
+        <!-- JS will inject items here -->
+    </div>
+
+    <div id="cartFab" onclick="toggleModal(true)">
+        <span style="font-size: 1.8rem;">🛒</span>
+        <div class="cart-count" id="cartBadge">0</div>
+    </div>
+
+    <div id="cartModal">
+        <div class="modal-header">
+            <h2>Your Order</h2>
+            <span class="close-modal" onclick="toggleModal(false)">&times;</span>
+        </div>
+        <div class="cart-items-list" id="cartItemsList"></div>
+        <div style="padding: 20px 0; border-top: 1px solid var(--gold);">
+            <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 800;">
+                <span>Total:</span>
+                <span id="cartTotal">AED 0.00</span>
+            </div>
+            <input type="text" id="tableNum" placeholder="Enter Table Number or Pickup" style="width:100%; margin-top:15px; padding:10px; border-radius:5px; border:none;">
+            <a href="#" class="checkout-btn" onclick="sendToWhatsApp()">PLACE ORDER ON WHATSAPP</a>
+        </div>
+    </div>
+
+    <script>
+        // High-volume menu data extracted from 20 pages
+        const menuData = [
+            // Page 2 & 13: Combos & Party Meals
+            { id: 1, name: "Fat Free Mega Party Meal (12 Pax)", price: 230, category: "Combos", desc: "Full Grill, Biriyani Rice, Broasted Chicken, Fruit Plate, Hummus, Salad & More" },
+            { id: 237, name: "Snack Meal (2 Pcs Chicken)", price: 11, category: "Combos", desc: "2 Pcs Broasted Chicken + Fries" },
+            { id: 241, name: "Jumbo Meal (4 Pcs Chicken)", price: 25, category: "Combos", desc: "4 Pcs Broasted Chicken + Fries + Bun + Coleslaw + Garlic" },
+            
+            // Page 3: Grills
+            { id: 14, name: "Grilled Chicken Only (Full)", price: 24, category: "Grills", desc: "Signature Grilled Chicken served with Fries" },
+            { id: 15, name: "Chicken Charcoal (Full)", price: 36, category: "Grills", desc: "Traditional Charcoal Grilled Chicken" },
+            { id: 17, name: "Cheese Charcoal Chicken", price: 46, category: "Grills", desc: "Full Charcoal Chicken topped with melted cheese" },
+            { id: 25, name: "Mix Charcoal Plate", price: 42, category: "Grills", desc: "Assorted Charcoal Items" },
+
+            // Page 4 & 5: Rice & Biriyani
+            { id: 27, name: "Grilled Chicken Mandi", price: 36, category: "Rice", desc: "Juicy Grilled Chicken over authentic Mandi Rice" },
+            { id: 28, name: "Chicken Dum Biriyani", price: 13.5, category: "Rice", desc: "Special Fat Free Dum Biriyani" },
+            { id: 30, name: "Mutton Waslah Biriyani", price: 54, category: "Rice", desc: "Premium Mutton chunks with spiced rice" },
+            { id: 41, name: "Vegetable Biriyani", price: 11, category: "Rice", desc: "Mixed vegetables with aromatic rice" },
+
+            // Page 7 & 8: Indian & Chinese
+            { id: 88, name: "Chilli Chicken Boneless", price: 20, category: "Indian", desc: "Indo-Chinese style spicy boneless chicken" },
+            { id: 94, name: "Butter Chicken Boneless", price: 20, category: "Indian", desc: "Rich creamy tomato gravy with chicken" },
+            { id: 109, name: "Chicken Lollypop", price: 20, category: "Indian", desc: "6 pieces of crispy chicken drumettes" },
+            { id: 125, name: "Mutton Soup", price: 15, category: "Indian", desc: "Healthy spiced mutton broth" },
+
+            // Page 9: Shawarma
+            { id: 135, name: "Arabic Shawarma", price: 13, category: "Shawarma", desc: "Sliced chicken, garlic sauce, pickles in toasted bread" },
+            { id: 142, name: "Rocket Shawarma", price: 17, category: "Shawarma", desc: "Extra long jumbo shawarma wrap" },
+            { id: 149, name: "Family Shawarma Plate", price: 55, category: "Shawarma", desc: "2 Shawarma + 2 Sp Shawarma + Fries + Cola" },
+
+            // Page 10 & 11: Burgers & Sandwiches
+            { id: 177, name: "Mega Zinger Burger", price: 17.5, category: "Burgers", desc: "Double spicy chicken fillet with cheese and lettuce" },
+            { id: 181, name: "Royal Burger", price: 13, category: "Burgers", desc: "Signature beef patty with special sauce" },
+            { id: 215, name: "Family Club Sandwich", price: 49, category: "Burgers", desc: "Multi-layered club sandwich for the whole family" },
+
+            // Page 16 & 17: Juices
+            { id: 298, name: "Fresh Orange Juice", price: 10, category: "Juices", desc: "100% Freshly squeezed oranges" },
+            { id: 303, name: "Avocado Special", price: 12.5, category: "Juices", desc: "Creamy avocado with honey and nuts" },
+            { id: 311, name: "Fat Free Special Juice", price: 16, category: "Juices", desc: "Layered mixed fruit signature juice" }
+        ];
+
+        let cart = [];
+
+        function renderMenu(items) {
+            const container = document.getElementById('menuDisplay');
+            container.innerHTML = '';
+            
+            if(items.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-dim);">No items found matching your search.</div>`;
+                return;
+            }
+
+            items.forEach(item => {
+                const card = `
+                    <div class="item-card">
+                        <div class="item-img">🍗</div>
+                        <div class="item-info">
+                            <div>
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-desc">${item.desc}</div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-price">AED ${item.price.toFixed(2)}</div>
+                                <button class="add-btn" onclick="addToCart(${item.id})">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function addToCart(id) {
+            const item = menuData.find(i => i.id === id);
+            const exists = cart.find(i => i.id === id);
+            if(exists) {
+                exists.qty++;
+            } else {
+                cart.push({...item, qty: 1});
+            }
+            updateCartUI();
+            
+            // Visual feedback
+            const fab = document.getElementById('cartFab');
+            fab.style.transform = 'scale(1.2)';
+            setTimeout(() => fab.style.transform = 'scale(1)', 200);
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const list = document.getElementById('cartItemsList');
+            const totalDisplay = document.getElementById('cartTotal');
+            
+            const totalQty = cart.reduce((acc, curr) => acc + curr.qty, 0);
+            const totalPrice = cart.reduce((acc, curr) => acc + (curr.qty * curr.price), 0);
+            
+            badge.innerText = totalQty;
+            totalDisplay.innerText = `AED ${totalPrice.toFixed(2)}`;
+            
+            list.innerHTML = '';
+            cart.forEach(item => {
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small>AED ${item.price} x ${item.qty}</small>
+                        </div>
+                        <div style="font-weight:bold;">AED ${(item.qty * item.price).toFixed(2)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterMenu() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = menuData.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                item.category.toLowerCase().includes(query)
+            );
+            renderMenu(filtered);
+        }
+
+        function filterCategory(cat) {
+            // Update UI buttons
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if(cat === 'All') {
+                renderMenu(menuData);
+            } else {
+                const filtered = menuData.filter(item => item.category === cat);
+                renderMenu(filtered);
+            }
+        }
+
+        function toggleModal(show) {
+            document.getElementById('cartModal').style.display = show ? 'flex' : 'none';
+        }
+
+        function sendToWhatsApp() {
+            if(cart.length === 0) return alert("Your cart is empty!");
+            
+            const table = document.getElementById('tableNum').value || "Not Specified";
+            let message = `*NEW ORDER FROM WEB APP*%0A--------------------------%0A`;
+            
+            cart.forEach(item => {
+                message += `• ${item.qty}x ${item.name} - AED ${(item.qty * item.price).toFixed(2)}%0A`;
+            });
+            
+            const total = cart.reduce((acc, curr) => acc + (curr.qty * curr.price), 0);
+            message += `--------------------------%0A*TOTAL: AED ${total.toFixed(2)}*%0A%0A*Table/Type:* ${table}`;
+            
+            // Restaurant Number from Page 1: 050 80 9 9141
+            window.open(`https://wa.me/971508099141?text=${message}`, '_blank');
+        }
+
+        // Initialize App
+        window.onload = () => {
+            renderMenu(menuData);
+        };
+    </script>
+</body>
+</html>
